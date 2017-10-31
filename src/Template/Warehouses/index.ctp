@@ -19,6 +19,7 @@
                             <th scope="col"><?= $this->Paginator->sort('product_id', 'Producto') ?></th>
                             <th scope="col"><?= $this->Paginator->sort('price', 'Precio') ?></th>
                             <th scope="col"><?= $this->Paginator->sort('stock', 'Stock') ?></th>
+                            <th scope="col"><?= $this->Paginator->sort('hit', 'Vistas') ?></th>
                             <th scope="col"><?= $this->Paginator->sort('active', 'Estado') ?></th>
                             <th scope="col"><?= $this->Paginator->sort('created', 'Registrado') ?></th>
                             <th scope="col" class="actions"><?= __('Acciones') ?></th>
@@ -29,8 +30,15 @@
                         <tr>
                             <td><?= h($key + 1) ?></td>
                             <td><?= h($warehouse->product->name) ?></td>
-                            <td><?= '$' . h($this->Number->format($warehouse->price)) ?></td>
-                            <td><?= $this->Number->format($warehouse->stock) ?></td>
+                            <td>
+                                <?php if($warehouse->price == $warehouse->final_price): ?>
+                                    <?= h($this->Number->format($warehouse->final_price, ['before' => '$', 'locale' => 'es_ES'])) ?>
+                                <?php else: ?>
+                                    <?= h($this->Number->format($warehouse->final_price, ['before' => '$', 'locale' => 'es_ES'])) . ' &nbsp;<strike><small>' . h($this->Number->format($warehouse->price, ['before' => '$', 'locale' => 'es_ES'])) . '</small></strike> &nbsp;<span class="text-success"><small>' . h($warehouse->discount) . '% dto.</small></span>' ?>
+                                <?php endif; ?>
+                            </td>
+                            <td><?= $warehouse->stock ?></td>
+                            <td><?= h($warehouse->hit) ?></td>
                             <td>
                                 <?= $warehouse->active ? '<span class="text-success"><small>Activo</small></span>' : '<span class="text-warning"><small>Inactivo</small></span>' ?>
                             </td>

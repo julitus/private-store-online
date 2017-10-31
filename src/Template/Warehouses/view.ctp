@@ -1,111 +1,88 @@
-<?php
-/**
- * @var \App\View\AppView $this
- * @var \App\Model\Entity\Warehouse $warehouse
- */
-?>
-<nav class="large-3 medium-4 columns" id="actions-sidebar">
-    <ul class="side-nav">
-        <li class="heading"><?= __('Actions') ?></li>
-        <li><?= $this->Html->link(__('Edit Warehouse'), ['action' => 'edit', $warehouse->id]) ?> </li>
-        <li><?= $this->Form->postLink(__('Delete Warehouse'), ['action' => 'delete', $warehouse->id], ['confirm' => __('Are you sure you want to delete # {0}?', $warehouse->id)]) ?> </li>
-        <li><?= $this->Html->link(__('List Warehouses'), ['action' => 'index']) ?> </li>
-        <li><?= $this->Html->link(__('New Warehouse'), ['action' => 'add']) ?> </li>
-        <li><?= $this->Html->link(__('List Products'), ['controller' => 'Products', 'action' => 'index']) ?> </li>
-        <li><?= $this->Html->link(__('New Product'), ['controller' => 'Products', 'action' => 'add']) ?> </li>
-        <li><?= $this->Html->link(__('List Stores'), ['controller' => 'Stores', 'action' => 'index']) ?> </li>
-        <li><?= $this->Html->link(__('New Store'), ['controller' => 'Stores', 'action' => 'add']) ?> </li>
-        <li><?= $this->Html->link(__('List Order Details'), ['controller' => 'OrderDetails', 'action' => 'index']) ?> </li>
-        <li><?= $this->Html->link(__('New Order Detail'), ['controller' => 'OrderDetails', 'action' => 'add']) ?> </li>
-    </ul>
-</nav>
-<div class="warehouses view large-9 medium-8 columns content">
-    <h3><?= h($warehouse->id) ?></h3>
-    <table class="vertical-table">
-        <tr>
-            <th scope="row"><?= __('Slug') ?></th>
-            <td><?= h($warehouse->slug) ?></td>
-        </tr>
-        <tr>
-            <th scope="row"><?= __('Product') ?></th>
-            <td><?= $warehouse->has('product') ? $this->Html->link($warehouse->product->name, ['controller' => 'Products', 'action' => 'view', $warehouse->product->id]) : '' ?></td>
-        </tr>
-        <tr>
-            <th scope="row"><?= __('Store') ?></th>
-            <td><?= $warehouse->has('store') ? $this->Html->link($warehouse->store->name, ['controller' => 'Stores', 'action' => 'view', $warehouse->store->id]) : '' ?></td>
-        </tr>
-        <tr>
-            <th scope="row"><?= __('Image') ?></th>
-            <td><?= h($warehouse->image) ?></td>
-        </tr>
-        <tr>
-            <th scope="row"><?= __('Path') ?></th>
-            <td><?= h($warehouse->path) ?></td>
-        </tr>
-        <tr>
-            <th scope="row"><?= __('Id') ?></th>
-            <td><?= $this->Number->format($warehouse->id) ?></td>
-        </tr>
-        <tr>
-            <th scope="row"><?= __('Price') ?></th>
-            <td><?= $this->Number->format($warehouse->price) ?></td>
-        </tr>
-        <tr>
-            <th scope="row"><?= __('Discount') ?></th>
-            <td><?= $this->Number->format($warehouse->discount) ?></td>
-        </tr>
-        <tr>
-            <th scope="row"><?= __('Stock') ?></th>
-            <td><?= $this->Number->format($warehouse->stock) ?></td>
-        </tr>
-        <tr>
-            <th scope="row"><?= __('Hit') ?></th>
-            <td><?= $this->Number->format($warehouse->hit) ?></td>
-        </tr>
-        <tr>
-            <th scope="row"><?= __('Created') ?></th>
-            <td><?= h($warehouse->created) ?></td>
-        </tr>
-        <tr>
-            <th scope="row"><?= __('Modified') ?></th>
-            <td><?= h($warehouse->modified) ?></td>
-        </tr>
-        <tr>
-            <th scope="row"><?= __('Active') ?></th>
-            <td><?= $warehouse->active ? __('Yes') : __('No'); ?></td>
-        </tr>
-    </table>
-    <div class="related">
-        <h4><?= __('Related Order Details') ?></h4>
-        <?php if (!empty($warehouse->order_details)): ?>
-        <table cellpadding="0" cellspacing="0">
-            <tr>
-                <th scope="col"><?= __('Id') ?></th>
-                <th scope="col"><?= __('Quantity') ?></th>
-                <th scope="col"><?= __('Unit Price') ?></th>
-                <th scope="col"><?= __('Warehouse Id') ?></th>
-                <th scope="col"><?= __('Order Id') ?></th>
-                <th scope="col"><?= __('Created') ?></th>
-                <th scope="col"><?= __('Modified') ?></th>
-                <th scope="col" class="actions"><?= __('Actions') ?></th>
-            </tr>
-            <?php foreach ($warehouse->order_details as $orderDetails): ?>
-            <tr>
-                <td><?= h($orderDetails->id) ?></td>
-                <td><?= h($orderDetails->quantity) ?></td>
-                <td><?= h($orderDetails->unit_price) ?></td>
-                <td><?= h($orderDetails->warehouse_id) ?></td>
-                <td><?= h($orderDetails->order_id) ?></td>
-                <td><?= h($orderDetails->created) ?></td>
-                <td><?= h($orderDetails->modified) ?></td>
-                <td class="actions">
-                    <?= $this->Html->link(__('View'), ['controller' => 'OrderDetails', 'action' => 'view', $orderDetails->id]) ?>
-                    <?= $this->Html->link(__('Edit'), ['controller' => 'OrderDetails', 'action' => 'edit', $orderDetails->id]) ?>
-                    <?= $this->Form->postLink(__('Delete'), ['controller' => 'OrderDetails', 'action' => 'delete', $orderDetails->id], ['confirm' => __('Are you sure you want to delete # {0}?', $orderDetails->id)]) ?>
-                </td>
-            </tr>
-            <?php endforeach; ?>
-        </table>
-        <?php endif; ?>
+<div class="container-fluid mercapp-page"  data-sidebar="products"> 
+
+<div class="row mercapp-product">
+
+    <div class="col-lg-4 col-md-6 col-lg-offset-4 col-md-offset-3">
+        <div class="card">
+            <div class="header">
+                <h4 class="title">
+                    Producto(<?= $warehouse->product->name ?>)&nbsp;
+                    <?php if($this->request->session()->read('Auth.User.id') == $warehouse->store->id): ?>
+                        <?= $this->Html->link(__('<span class="ti-pencil" aria-hidden="true"></span>'), ['action' => 'edit', $warehouse->id, $warehouse->slug], ['class' => 'btn btn-simbol btn-success-inv', 'title' => 'Editar', 'escape' => false]) ?>
+                    <?php endif; ?>
+                </h4>
+            </div>
+            <div class="content content-image">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="image-image">
+                            <?php if($warehouse->image == "" or is_null($warehouse->image)): ?>
+                              <?= $this->Html->image('no-image.png', ['alt' => 'imagen']) ?>
+                            <?php else: ?>
+                              <?= $this->Html->image($warehouse->path . $warehouse->image, ['alt' => 'imagen']) ?>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="content">
+                <div class="row row-view">
+                    <div class="col-xs-12">
+                        <span class="text-success"><small>Nombre</small></span><br>
+                        <?= $warehouse->product->name ?>
+                    </div>
+                    <div class="col-xs-12">
+                        <span class="text-success"><small>Capacidad</small></span><br>
+                        <?= h($warehouse->product->content) . ' ' . $warehouse->product->measure->abrev ?>
+                    </div>
+                    <div class="col-xs-12">
+                        <span class="text-success"><small>Precio</small></span><br>
+                        <?php if($warehouse->price == $warehouse->final_price): ?>
+                                    <?= h($this->Number->format($warehouse->final_price, ['before' => '$', 'locale' => 'es_ES'])) ?>
+                        <?php else: ?>
+                            <?= h($this->Number->format($warehouse->final_price, ['before' => '$', 'locale' => 'es_ES'])) . ' &nbsp;<strike><small>' . h($this->Number->format($warehouse->price, ['before' => '$', 'locale' => 'es_ES'])) . '</small></strike> &nbsp;<span class="text-success"><small>' . h($warehouse->discount) . '% dto.</small></span>' ?>
+                        <?php endif; ?>
+                    </div>
+                    <div class="col-xs-12">
+                        <span class="text-success"><small>Stock</small></span><br>
+                        <?= $warehouse->stock ?>
+                    </div>
+                    <div class="col-xs-12">
+                        <span class="text-success"><small>Categoría</small></span><br>
+                        <?= $warehouse->product->has('category') ? $warehouse->product->category->name : '--' ?>
+                    </div>
+                    <div class="col-xs-12">
+                        <span class="text-success"><small>Tienda</small></span><br>
+                        <?= $warehouse->store->name ?>
+                    </div>
+                    <div class="col-xs-12">
+                        <span class="text-success"><small>Estado</small></span><br>
+                        <?= $warehouse->active ? '<span class="text-success">Activo</span>' : '<span class="text-warning">Inactivo</span>' ?>
+                    </div>
+                    <div class="col-xs-12">
+                        <span class="text-success"><small>Visualizaciones</small></span><br>
+                        <?= $warehouse->hit ?>
+                    </div>
+                    <div class="col-xs-12">
+                        <span class="text-success"><small>Creado</small></span><br>
+                        <?= $warehouse->created_date ?>
+                    </div>
+                    <div class="col-xs-12">
+                        <span class="text-success"><small>Ult. Modificación</small></span><br>
+                        <?= $warehouse->modified_date ?>
+                    </div>
+                </div>
+                <div class="text-center">
+                    <?php if($this->request->session()->read('Auth.User.id') == $warehouse->store->id): ?>
+                        <?= $this->Html->link(__('Ir a Lista'), ['action' => 'index'], ['class' => 'btn btn-warning btn-fill btn-wd']) ?>
+                    <?php else: ?>
+                        <a href="javascript:history.back()" class="btn btn-warning btn-fill btn-wd">Atrás</a>
+                    <?php endif; ?>
+                </div>
+            </div>
+        </div>
     </div>
+
+</div>
+
 </div>

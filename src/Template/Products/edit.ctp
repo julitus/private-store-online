@@ -5,7 +5,7 @@
     <div class="col-lg-8 col-md-10 col-lg-offset-2 col-md-offset-1">
         <div class="card">
             <div class="header">
-                <h4 class="title">Editar Producto</h4>
+                <h4 class="title">Editar Producto "<?= $product->name ?>"</h4>
             </div>
             <div class="content">
                 <?= $this->Form->create($product, ['type' => 'file']) ?>

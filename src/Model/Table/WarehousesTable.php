@@ -75,7 +75,7 @@ class WarehousesTable extends Table
 
         $validator
             ->integer('stock')
-            ->allowEmpty('stock');  //???
+            ->notEmpty('stock', 'Por favor llene este campo.');
 
         $validator
             ->allowEmpty('hit');
@@ -119,9 +119,9 @@ class WarehousesTable extends Table
         $warehouse = $this->get($entity->id, [
             'contain' => ['OrderDetails' => function($q) { return $q->limit(1); }]
         ]);
-        /*if (empty($warehouse->order_details)) {
+        if (empty($warehouse->order_details)) {
             return true;
-        }*/
+        }
         return false;
     }
 
@@ -135,6 +135,7 @@ class WarehousesTable extends Table
         $date_format = Configure::read('DATE_FORMAT');
         $warehouse['created_date'] = h(date($date_format, strtotime($warehouse['created'])));
         $warehouse['modified_date'] = h(date($date_format, strtotime($warehouse['modified'])));
+        $warehouse['final_price'] = $warehouse['price'] * ((100 - $warehouse['discount']) / 100);
         return $warehouse;
     }
 }

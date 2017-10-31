@@ -125,14 +125,6 @@ class ProductsTable extends Table
         return false;
     }
 
-    /*public function isOwnedBy($storeId, $storeID)
-    {
-        if ($storeId == $storeID) {
-            return $this->exists(['id' => $storeID]);
-        }
-        return false;
-    }*/
-
     public function setBeforeProduct($product)
     {
         $date_format = Configure::read('DATE_FORMAT');

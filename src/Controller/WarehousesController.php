@@ -18,14 +18,16 @@ class WarehousesController extends AppController
 
     public function isAuthorized($store)
     {
-        if (in_array($this->request->getParam('action'), ['index', 'delete', 'active', 'getLastRowAjax'])) {
+        // solo las tiendas
+        if (in_array($this->request->getParam('action'), ['index', 'getLastRowAjax'])) {
             if (isset($store['role']) && $store['role'] === 1) {
                 return true;
             } else {
                 return false;
             }
         }
-        if (in_array($this->request->getParam('action'), ['edit'])) {
+        // solo las tiendas y lo que les pertenece
+        if (in_array($this->request->getParam('action'), ['active', 'edit', 'delete'])) {
             $warehouseId = (int) $this->request->getParam('pass.0');
             if ($this->Warehouses->isOwnedBy($warehouseId, $store['id'])) {
                 return true;
@@ -33,6 +35,7 @@ class WarehousesController extends AppController
                 return false;
             }
         }
+        // el administrador y cada tienda con su pertenencia
         if (in_array($this->request->getParam('action'), ['view'])) {
             $warehouseId = (int) $this->request->getParam('pass.0');
             if ($this->Warehouses->isOwnedBy($warehouseId, $store['id'])) {
@@ -55,7 +58,11 @@ class WarehousesController extends AppController
                 'Warehouses.created' => 'desc'
             ]
         ];
-        $warehouses = $this->paginate($this->Warehouses->find()->where(['Warehouses.store_id' => $this->Auth->user('id')]));
+        $warehouses = $this->paginate($this->Warehouses->find()
+                    ->where(['Warehouses.store_id' => $this->Auth->user('id')])
+                    ->select(['final_price' => 'price * ((100 - discount) / 100)'])
+                    ->autoFields(true)
+                );
 
         $this->set('date_format', Configure::read('DATE_FORMAT'));
         $this->set(compact('warehouses'));
@@ -73,34 +80,13 @@ class WarehousesController extends AppController
     {
         $warehouse = $this->Warehouses->get($id, [
             'contain' => [
-                'Products' => function($q) { return $q->select(['Products.id', 'Products.name', 'Products.path', 'Products.image']); }, 
+                'Products' => function($q) { return $q->select(['Products.id', 'Products.name', 'Products.content', 'Products.category_id', 'Products.measure_id'])->contain(['Categories', 'Measures']); }, 
                 'Stores' => function($q) { return $q->select(['Stores.id', 'Stores.role', 'Stores.name']); }]
         ]);
 
+        $warehouse = $this->Warehouses->setBeforeWarehouse($warehouse);
+
         $this->set('warehouse', $warehouse);
-        $this->set('_serialize', ['warehouse']);
-    }
-
-    /**
-     * Add method
-     *
-     * @return \Cake\Http\Response|null Redirects on successful add, renders view otherwise.
-     */
-    public function add()
-    {
-        $warehouse = $this->Warehouses->newEntity();
-        if ($this->request->is('post')) {
-            $warehouse = $this->Warehouses->patchEntity($warehouse, $this->request->getData());
-            if ($this->Warehouses->save($warehouse)) {
-                $this->Flash->success(__('The warehouse has been saved.'));
-
-                return $this->redirect(['action' => 'index']);
-            }
-            $this->Flash->error(__('The warehouse could not be saved. Please, try again.'));
-        }
-        $products = $this->Warehouses->Products->find('list', ['limit' => 200]);
-        $stores = $this->Warehouses->Stores->find('list', ['limit' => 200]);
-        $this->set(compact('warehouse', 'products', 'stores'));
         $this->set('_serialize', ['warehouse']);
     }
 
@@ -114,20 +100,33 @@ class WarehousesController extends AppController
     public function edit($id = null)
     {
         $warehouse = $this->Warehouses->get($id, [
-            'contain' => []
+            'contain' => ['Products']
         ]);
         if ($this->request->is(['patch', 'post', 'put'])) {
+            if($this->request->data['picture']['name'] != ""){
+                $folder = "/files/warehouses/" . $id;
+                $file = sha1(md5($warehouse->product->name));
+                $picture = $file . substr($this->request->data['picture']['name'], -4);
+                $this->request->data['path'] = $folder . DS;
+                $this->request->data['image'] = $picture;
+            }
+
             $warehouse = $this->Warehouses->patchEntity($warehouse, $this->request->getData());
             if ($this->Warehouses->save($warehouse)) {
-                $this->Flash->success(__('The warehouse has been saved.'));
+                if($this->request->data['picture']['name'] != ""){
+                    $dir = new Folder(WWW_ROOT . $folder, true, 0775);
+                    parent::moveUploadFile($this->request->data['picture']["tmp_name"], $folder . DS . $picture);
+                }
+                $this->Flash->success(__('El registro fue guardado.'));
 
                 return $this->redirect(['action' => 'index']);
             }
-            $this->Flash->error(__('The warehouse could not be saved. Please, try again.'));
+            $this->Flash->error(__('El registro no fue guardado, por favor intentelo nuevamente.'));
         }
-        $products = $this->Warehouses->Products->find('list', ['limit' => 200]);
-        $stores = $this->Warehouses->Stores->find('list', ['limit' => 200]);
-        $this->set(compact('warehouse', 'products', 'stores'));
+        $categories = $this->Warehouses->Products->Categories->find('list', ['conditions' => ['Categories.id' => $warehouse->product->category_id]]);
+        $measures = $this->Warehouses->Products->Measures->find('list', ['conditions' => ['Measures.id' => $warehouse->product->measure_id]]);
+
+        $this->set(compact('warehouse', 'categories', 'measures'));
         $this->set('_serialize', ['warehouse']);
     }
 

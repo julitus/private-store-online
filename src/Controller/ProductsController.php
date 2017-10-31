@@ -71,7 +71,11 @@ class ProductsController extends AppController
                 'Warehouses.Stores.name' => 'desc'
             ]
         ];
-        $warehouses = $this->paginate($this->Products->Warehouses->find('all', [ 'conditions' => ['Warehouses.product_id =' => $product->id]]));
+        $warehouses = $this->paginate($this->Products->Warehouses->find()
+                ->where(['Warehouses.product_id =' => $product->id])
+                ->select(['final_price' => 'price * ((100 - discount) / 100)'])
+                ->autoFields(true)
+            );
 
         $this->set(compact('product', 'warehouses'));
         $this->set('_serialize', ['product']);
@@ -121,7 +125,6 @@ class ProductsController extends AppController
     {
         $product = $this->Products->newEntity();
         if ($this->request->is('post')) {
-            debug($this->request->data);
             if ($this->request->data['is_new']) {
                 $this->request->data['name'] = $this->request->data['name'][0];
                 $this->request->data['slug'] = Inflector::slug($this->request->data['name'] . ' ' . $this->request->data['measure_id'] . ' ' . $this->request->data['content']);

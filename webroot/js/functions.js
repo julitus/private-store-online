@@ -396,6 +396,30 @@ $(document).ready(function(){
         //$('input.select2-search__field').select2('focus');
         //$("input.select2-search__field:first").focus();
     }
+
+    if ($('.msg-pop').length > 0) {
+        var $icon = 'ti-star';
+        var $type = 'success';
+        var $msg = $('.msg-pop').html();
+        
+        if ($('.msg-pop').hasClass('error')) {
+            $type = 'danger';
+            $icon = 'ti-alert';
+        }
+        demo.initChartist();
+        $.notify({
+            icon: $icon,
+            message: $msg
+
+        },{
+            type: $type,
+            timer: 4000,
+            placement: {
+              from: 'bottom',
+              align: 'right'
+          }
+        });
+    }
     
     if ($('#map').length > 0) {
     	$().ready(function(){
@@ -420,30 +444,6 @@ $(document).ready(function(){
         }
         var $ids = {idDiv: 'map-location', idSearch: 'map-search', idInput: 'map-address', idLat: 'latitude', idLng: 'longitude'};
         defaultGeolocationStore($ids, $point, 6, 15, $existLocation);
-    }
-
-    if ($('.msg-pop').length > 0) {
-    	var $icon = 'ti-star';
-    	var $type = 'success';
-      	var $msg = $('.msg-pop').html();
-      	
-      	if ($('.msg-pop').hasClass('error')) {
-        	$type = 'danger';
-        	$icon = 'ti-alert';
-      	}
-      	demo.initChartist();
-	    $.notify({
-	        icon: $icon,
-	        message: $msg
-
-	    },{
-	        type: $type,
-	        timer: 4000,
-	        placement: {
-	          from: 'bottom',
-	          align: 'right'
-	      }
-	    });
     }
 
 });

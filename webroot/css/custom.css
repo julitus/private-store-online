@@ -214,6 +214,9 @@ i.admin-star {
 	padding-top: 25px;
 	text-align: center;
 }
+.card .content-image {
+	padding-top: 10px;
+}
 .content-logo .image-logo {
 	height: 75px;
 	vertical-align: middle;

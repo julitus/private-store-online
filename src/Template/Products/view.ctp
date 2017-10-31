@@ -31,7 +31,7 @@
                     </div>
                     <div class="col-xs-12">
                         <span class="text-success"><small>Capacidad</small></span><br>
-                        <?= h($this->Number->format($product->content)) . ' ' . $product->measure->abrev ?>
+                        <?= h($product->content) . ' ' . $product->measure->abrev ?>
                     </div>
                     <div class="col-xs-12">
                         <span class="text-success"><small>Categoría</small></span><br>
@@ -70,8 +70,8 @@
                         <th scope="col">#</th>
                         <th scope="col"><?= $this->Paginator->sort('store_id', 'Tienda') ?></th>
                         <th scope="col"><?= $this->Paginator->sort('price', 'Precio') ?></th>
-                        <th scope="col"><?= $this->Paginator->sort('discount', 'Dto.') ?></th>
-                        <th scope="col"><?= $this->Paginator->sort('hit', '# de Vistas') ?></th>
+                        <th scope="col"><?= $this->Paginator->sort('hit', 'Vistas') ?></th>
+                        <th scope="col"><?= $this->Paginator->sort('active', 'Estado') ?></th>
                         <th scope="col" class="actions"><?= __('Acciones') ?></th>
                     </thead>
                     <tbody>
@@ -79,9 +79,17 @@
                             <tr>
                                 <td><?= h($key + 1) ?></td>
                                 <td><?= h($warehouse->store->name) ?></td>
-                                <td><?= '$' . h($this->Number->format($warehouse->price)) ?></td>
-                                <td><?= h($this->Number->format($warehouse->discount)) . '%' ?></td>
+                                <td>
+                                    <?php if($warehouse->price == $warehouse->final_price): ?>
+                                        <?= h($this->Number->format($warehouse->final_price, ['before' => '$', 'locale' => 'es_ES'])) ?>
+                                    <?php else: ?>
+                                        <?= h($this->Number->format($warehouse->final_price, ['before' => '$', 'locale' => 'es_ES'])) . ' &nbsp;<strike><small>' . h($this->Number->format($warehouse->price, ['before' => '$', 'locale' => 'es_ES'])) . '</small></strike> &nbsp;<span class="text-success"><small>' . h($warehouse->discount) . '% dto.</small></span>' ?>
+                                    <?php endif; ?>
+                                </td>
                                 <td><?= h($warehouse->hit) ?></td>
+                                <td>
+                                    <?= $warehouse->active ? '<span class="text-success"><small>Activo</small></span>' : '<span class="text-warning"><small>Inactivo</small></span>' ?>
+                                </td>
                                 <td class="actions">
                                     <?= $this->Html->link(__('<span class="ti-eye" aria-hidden="true"></span>'), ['controller' => 'warehouses', 'action' => 'view', $warehouse->id, $warehouse->slug], ['class' => 'btn btn-simbol btn-success', 'title' => 'Ver', 'escape' => false]) ?>
                                 </td>

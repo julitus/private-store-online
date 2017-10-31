@@ -29,7 +29,7 @@
                         <tr>
                             <td><?= h($key + 1) ?></td>
                             <td><?= h($product->name) ?></td>
-                            <td><?= h($this->Number->format($product->content)) . ' ' . $product->measure->abrev ?></td>
+                            <td><?= h($product->content) . ' ' . $product->measure->abrev ?></td>
                             <td><?= $product->has('category') ? $product->category->name : '--' ?></td>
                             <td><?= h($product->store->name) . ($product->store->role ? '' : '<i class="fa fa-star-o admin-star"></i>') ?></td>
                             <td><?= h(date($date_format, strtotime($product->created))) ?></td>

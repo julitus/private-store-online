@@ -10,7 +10,7 @@
     <div class="col-lg-12 col-md-12">
         <div class="card">
             <div class="header">
-                <h4 class="title">Editar Tienda</h4>
+                <h4 class="title">Editar Tienda "<?= $store->name ?>"</h4>
             </div>
             <div class="content ">
                 <?= $this->Form->create($store, ['type' => 'file']) ?>
