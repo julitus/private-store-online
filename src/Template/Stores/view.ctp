@@ -63,6 +63,11 @@
                         <?= $store->has('province') ? $store->province->name : '--' ?>
                     </div>
                     <div class="col-xs-12">
+                        <span class="text-success"><small>Localización</small></span><br>
+                        <span class="text-success"><small>lat:</small></span> <?= $store->latitude ?><br>
+                        <span class="text-success"><small>lng:</small></span> <?= $store->longitude ?>
+                    </div>
+                    <div class="col-xs-12">
                         <span class="text-success"><small>Estado</small></span><br>
                         <?= $store->active ? '<span class="text-success">Activo</span>' : '<span class="text-warning">Inactivo</span>' ?>
                     </div>

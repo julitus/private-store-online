@@ -216,4 +216,7 @@ if (Configure::read('debug')) {
     Plugin::load('DebugKit', ['bootstrap' => true]);
 }
 
+Plugin::load('CakeMonga');
+//CollectionRegistry::setNamespace('App\\Model\\MongoCollection');
+
 Configure::write('DATE_FORMAT','d-m-Y');

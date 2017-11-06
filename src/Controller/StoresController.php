@@ -6,6 +6,7 @@ use Cake\Utility\Inflector;
 use Cake\Filesystem\Folder;
 use Cake\Event\Event;
 use Cake\Core\Configure;
+use CakeMonga\MongoCollection\CollectionRegistry;
 
 /**
  * Stores Controller
@@ -96,6 +97,8 @@ class StoresController extends AppController
                     $dir = new Folder(WWW_ROOT . $folder, true, 0775);
                     parent::moveUploadFile($this->request->data['picture']["tmp_name"], $folder . DS . $picture);
                 }
+                $stores_collection = CollectionRegistry::get('Stores');
+                $stores_collection->insertTo($row);
 
                 $this->Flash->success(__('El registro fue guardado.'));
 
@@ -128,7 +131,7 @@ class StoresController extends AppController
             }
 
             $store = $this->Stores->patchEntity($store, $this->request->getData());
-            if ($this->Stores->save($store)) {
+            if ($row = $this->Stores->save($store)) {
                 if($this->request->data['picture']['name'] != ""){
                     $dir = new Folder(WWW_ROOT . $folder, true, 0775);
                     parent::moveUploadFile($this->request->data['picture']["tmp_name"], $folder . DS . $picture);
@@ -141,6 +144,8 @@ class StoresController extends AppController
                     $this->request->session()->write('Auth.User.name', $store->name);
                     $this->request->session()->write('Auth.User.slug', $store->slug);
                 }
+                $stores_collection = CollectionRegistry::get('Stores');
+                $stores_collection->updateTo($row);
 
                 $this->Flash->success(__('El registro fue guardado.'));
 
@@ -181,6 +186,8 @@ class StoresController extends AppController
         $this->request->allowMethod(['post', 'delete']);
         $store = $this->Stores->get($id);
         if ($this->Stores->delete($store)) {
+            $stores_collection = CollectionRegistry::get('Stores');
+            $stores_collection->removeTo($id);
             $this->Flash->success(__('El registro fue eliminado.'));
         } else {
             $this->Flash->error(__('No se pudo eliminar el registro, es posible que tenga dependencias con otros registros.'));
