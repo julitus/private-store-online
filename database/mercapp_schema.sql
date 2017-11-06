@@ -249,13 +249,13 @@ CREATE TABLE products (
     name character varying(128),
     content double precision,
     image character varying(64),
-    image_high character varying(64),
     path character varying(256),
     created_by bigint,
     category_id integer,
     measure_id integer,
     created timestamp without time zone,
-    modified timestamp without time zone
+    modified timestamp without time zone,
+    slug character varying(128)
 );
 
 
@@ -388,8 +388,8 @@ CREATE TABLE stores (
     phone character varying(64),
     contact character varying(255),
     slug character varying(128),
-    latitude character varying(32),
-    longitude character varying(32),
+    latitude character varying(32) DEFAULT 0,
+    longitude character varying(32) DEFAULT 0,
     image character varying(64),
     path character varying(256),
     description text,
@@ -441,7 +441,9 @@ CREATE TABLE warehouses (
     product_id bigint,
     store_id bigint,
     created timestamp without time zone,
-    modified timestamp without time zone
+    modified timestamp without time zone,
+    image character varying(64),
+    path character varying(128)
 );
 
 
