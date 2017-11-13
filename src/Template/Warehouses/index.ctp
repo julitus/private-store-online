@@ -29,7 +29,7 @@
                         <?php foreach ($warehouses as $key => $warehouse): ?>
                         <tr>
                             <td><?= h($key + 1) ?></td>
-                            <td><?= h($warehouse->product->name) ?></td>
+                            <td><?= h($warehouse->product->name . ' ' . $warehouse->product->content . ' ' . $warehouse->product->measure->abrev) ?></td>
                             <td>
                                 <?php if($warehouse->price == $warehouse->final_price): ?>
                                     <?= h($this->Number->format($warehouse->final_price, ['before' => '$', 'locale' => 'es_ES'])) ?>

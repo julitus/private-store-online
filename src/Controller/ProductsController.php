@@ -5,6 +5,7 @@ use App\Controller\AppController;
 use Cake\Utility\Inflector;
 use Cake\Filesystem\Folder;
 use Cake\Core\Configure;
+use CakeMonga\MongoCollection\CollectionRegistry;
 
 /**
  * Products Controller
@@ -148,6 +149,9 @@ class ProductsController extends AppController
                         $dir = new Folder(WWW_ROOT . $folder, true, 0775);
                         parent::moveUploadFile($this->request->data['picture']["tmp_name"], $folder . DS . $picture);
                     }
+                    $row->warehouses[0]['active'] = false;
+                    $stores_collection = CollectionRegistry::get('Stores');
+                    $stores_collection->updateProductTo($row->warehouses[0]);
                     $this->Flash->success(__('El registro fue guardado.'));
 
                     return $this->redirect(['controller' => 'warehouses', 'action' => 'index']);
@@ -177,6 +181,9 @@ class ProductsController extends AppController
                         $dir = new Folder(WWW_ROOT . $folder, true, 0775);
                         parent::moveUploadFile($this->request->data['picture']["tmp_name"], $folder . DS . $picture);
                     }
+                    $row['active'] = false;
+                    $stores_collection = CollectionRegistry::get('Stores');
+                    $stores_collection->updateProductTo($row);
                     $this->Flash->success(__('El registro fue guardado.'));
 
                     return $this->redirect(['controller' => 'warehouses', 'action' => 'index']);

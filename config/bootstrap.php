@@ -220,3 +220,5 @@ Plugin::load('CakeMonga');
 //CollectionRegistry::setNamespace('App\\Model\\MongoCollection');
 
 Configure::write('DATE_FORMAT','d-m-Y');
+Configure::write('HOUR_FORMAT','H:i');
+Configure::write('DATE_HOUR_FORMAT','d-m-Y H:i');

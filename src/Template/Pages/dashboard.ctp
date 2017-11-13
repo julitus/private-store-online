@@ -2,6 +2,7 @@
     $getStoresStatsAdmin = $this->Url->build(['controller' => 'stores', 'action' => 'getLastRowAjax']);
     $getProductsStatsAdmin = $this->Url->build(['controller' => 'products', 'action' => 'getLastRowAjax']);
     $getProductsStatsStore = $this->Url->build(['controller' => 'warehouses', 'action' => 'getLastRowAjax']);
+    $getOrdersStats = $this->Url->build(['controller' => 'orders', 'action' => 'getLastRowAjax']);
 ?>
 
 <div class="container-fluid mercapp-page" data-sidebar="home"> 
@@ -12,23 +13,53 @@
         <div class="col-lg-3 col-sm-6">
             <div class="card">
                 <div class="content">
-                    <div class="row">
+                    <?= $this->Html->link(
+                    '<div class="row">
                         <div class="col-xs-5">
-                            <div class="icon-big icon-success text-center">
-                                <i class="ti-truck"></i>
+                            <div class="icon-big icon-warning text-center">
+                                <i class="ti-home"></i>
                             </div>
                         </div>
                         <div class="col-xs-7">
                             <div class="numbers">
-                                <p>Ordenes</p>
-                                25
+                                <p>Mi Tienda</p>
+                                +
                             </div>
                         </div>
-                    </div>
+                    </div>', 
+                    ['controller' => 'stores', 'action' => 'view', $this->request->session()->read('Auth.User.id'), $this->request->session()->read('Auth.User.slug')], ['escape' => false]) ?>
                     <div class="footer">
                         <hr />
                         <div class="stats">
-                            <i class="ti-timer"></i> Ult. orden hace 2 horas
+                            <i class="ti-more"></i> Ubicación, logo, etc
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-sm-6">
+            <div class="card" id="orders-stats-store" data-url="<?= $getOrdersStats ?>">
+                <div class="content">
+                    <?= $this->Html->link(
+                        '<div class="row">
+                            <div class="col-xs-5">
+                                <div class="icon-big icon-success text-center">
+                                    <i class="ti-truck"></i>
+                                </div>
+                            </div>
+                            <div class="col-xs-7">
+                                <div class="numbers numbers-sub">
+                                    <p>Ordenes</p>
+                                    <span>0</span>
+                                </div>
+                            </div>
+                        </div>', 
+                        ['controller' => 'orders', 'action' => 'myIndex'], ['escape' => false, 'title' => 'Ordenes de mis clientes']) ?>
+                    <div class="footer">
+                        <hr />
+                        <div class="stats">
+                            <i class="ti-timer"></i>
+                            <span></span>
                         </div>
                     </div>
                 </div>
@@ -46,7 +77,7 @@
                             </div>
                             <div class="col-xs-7">
                                 <div class="numbers numbers-sub">
-                                    <p>Mis Productos</p>
+                                    <p>Productos</p>
                                     <span>0</span>
                                 </div>
                             </div>
@@ -87,33 +118,6 @@
                 </div>
             </div>
         </div-->
-        <div class="col-lg-3 col-sm-6">
-            <div class="card">
-                <div class="content">
-                    <?= $this->Html->link(
-                    '<div class="row">
-                        <div class="col-xs-5">
-                            <div class="icon-big icon-warning text-center">
-                                <i class="ti-home"></i>
-                            </div>
-                        </div>
-                        <div class="col-xs-7">
-                            <div class="numbers">
-                                <p>Mi Tienda</p>
-                                +
-                            </div>
-                        </div>
-                    </div>', 
-                    ['controller' => 'stores', 'action' => 'view', $this->request->session()->read('Auth.User.id'), $this->request->session()->read('Auth.User.slug')], ['escape' => false]) ?>
-                    <div class="footer">
-                        <hr />
-                        <div class="stats">
-                            <i class="ti-more"></i> Ubicación, logo, etc
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
     </div>
 
 <?php else: ?>
@@ -148,25 +152,28 @@
             </div>
         </div>
         <div class="col-lg-3 col-sm-6">
-            <div class="card">
+            <div class="card" id="orders-stats-admin" data-url="<?= $getOrdersStats ?>">
                 <div class="content">
-                    <div class="row">
-                        <div class="col-xs-5">
-                            <div class="icon-big icon-success text-center">
-                                <i class="ti-truck"></i>
+                    <?= $this->Html->link(
+                        '<div class="row">
+                            <div class="col-xs-5">
+                                <div class="icon-big icon-success text-center">
+                                    <i class="ti-truck"></i>
+                                </div>
                             </div>
-                        </div>
-                        <div class="col-xs-7">
-                            <div class="numbers">
-                                <p>Ordenes</p>
-                                25
+                            <div class="col-xs-7">
+                                <div class="numbers numbers-sub">
+                                    <p>Ordenes</p>
+                                    <span>0</span>
+                                </div>
                             </div>
-                        </div>
-                    </div>
+                        </div>', 
+                        ['controller' => 'orders', 'action' => 'index'], ['escape' => false, 'title' => 'Ordenes de los clientes']) ?>
                     <div class="footer">
                         <hr />
                         <div class="stats">
-                            <i class="ti-timer"></i> Ult. orden hace 2 horas
+                            <i class="ti-timer"></i>
+                            <span></span>
                         </div>
                     </div>
                 </div>

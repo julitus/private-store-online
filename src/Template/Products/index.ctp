@@ -31,7 +31,7 @@
                             <td><?= h($product->name) ?></td>
                             <td><?= h($product->content) . ' ' . $product->measure->abrev ?></td>
                             <td><?= $product->has('category') ? $product->category->name : '--' ?></td>
-                            <td><?= h($product->store->name) . ($product->store->role ? '' : '<i class="fa fa-star-o admin-star"></i>') ?></td>
+                            <td><?= $product->has('store') ? h($product->store->name) . ($product->store->role ? '' : '<i class="fa fa-star-o admin-star"></i>') : '--' ?></td>
                             <td><?= h(date($date_format, strtotime($product->created))) ?></td>
                             <td class="actions">
                                 <?= $this->Html->link(__('<span class="ti-eye" aria-hidden="true"></span>'), ['action' => 'view', $product->id, $product->slug], ['class' => 'btn btn-simbol btn-success', 'title' => 'Ver', 'escape' => false]) ?>

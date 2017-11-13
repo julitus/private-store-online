@@ -60,7 +60,9 @@ Router::scope('/', function (RouteBuilder $routes) {
 
     $routes->connect('/tiendas', ['controller' => 'Stores', 'action' => 'index']);
     $routes->connect('/productos', ['controller' => 'Products', 'action' => 'index']);
+    $routes->connect('/ordenes', ['controller' => 'Orders', 'action' => 'index']);
     $routes->connect('/almacen', ['controller' => 'Warehouses', 'action' => 'index']);
+    $routes->connect('/ordenes/s', ['controller' => 'Orders', 'action' => 'myIndex']);
     $routes->connect('/tienda/a', ['controller' => 'Stores', 'action' => 'add']);
     $routes->connect('/producto/a', ['controller' => 'Products', 'action' => 'add']);
     $routes->connect('/producto/i/a', ['controller' => 'Products', 'action' => 'addItem']);
@@ -100,6 +102,11 @@ Router::scope('/', function (RouteBuilder $routes) {
         '/producto/i/e/:id-:slug', 
         ['controller' => 'Warehouses', 'action' => 'edit'],
         ['pass' => ['id', 'slug'], 'id' => '[0-9]+']
+    );
+    $routes->connect(
+        '/orden/:id-:code', 
+        ['controller' => 'Orders', 'action' => 'view'],
+        ['pass' => ['id', 'code'], 'id' => '[0-9]+']
     );
 
     $routes->connect('/categorias', ['controller' => 'Categories', 'action' => 'add']);

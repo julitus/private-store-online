@@ -5,6 +5,7 @@ use App\Controller\AppController;
 use Cake\Utility\Inflector;
 use Cake\Filesystem\Folder;
 use Cake\Core\Configure;
+use CakeMonga\MongoCollection\CollectionRegistry;
 
 /**
  * Warehouses Controller
@@ -53,7 +54,11 @@ class WarehousesController extends AppController
     public function index()
     {
         $this->paginate = [
-            'contain' => ['Products'],
+            'contain' => [
+                'Products' => function($q) { 
+                    return $q->contain(['Measures']); 
+                }
+            ],
             'order' => [
                 'Warehouses.created' => 'desc'
             ]
@@ -81,7 +86,8 @@ class WarehousesController extends AppController
         $warehouse = $this->Warehouses->get($id, [
             'contain' => [
                 'Products' => function($q) { return $q->select(['Products.id', 'Products.name', 'Products.content', 'Products.category_id', 'Products.measure_id'])->contain(['Categories', 'Measures']); }, 
-                'Stores' => function($q) { return $q->select(['Stores.id', 'Stores.role', 'Stores.name']); }]
+                'Stores' => function($q) { return $q->select(['Stores.id', 'Stores.role', 'Stores.name']); }
+            ]
         ]);
 
         $warehouse = $this->Warehouses->setBeforeWarehouse($warehouse);
@@ -142,6 +148,8 @@ class WarehousesController extends AppController
         $this->request->allowMethod(['post', 'delete']);
         $warehouse = $this->Warehouses->get($id);
         if ($this->Warehouses->delete($warehouse)) {
+            $stores_collection = CollectionRegistry::get('Stores');
+            $stores_collection->removeProductTo($warehouse);
             $this->Flash->success(__('El registro fue eliminado.'));
         } else {
             $this->Flash->error(__('No se pudo eliminar el registro, es posible que tenga dependencias con otros registros.'));
@@ -156,6 +164,8 @@ class WarehousesController extends AppController
         $warehouse = $this->Warehouses->get($id);
         $warehouse->active = !$warehouse->active;
         if ($this->Warehouses->save($warehouse)) {
+            $stores_collection = CollectionRegistry::get('Stores');
+            $stores_collection->changeActiveProductTo($warehouse);
             if ($warehouse->active) {
                 $this->Flash->success(__('El registro fue activado.'));
             } else {

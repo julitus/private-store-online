@@ -154,13 +154,21 @@ function getDiffDates($date1, $date2, $str) {
     if (diff == 0) {
         diff = dmoment1.diff(dmoment2, 'hours');
         if (diff == 0) {
-            return "Últ. " + $str + " hace " + dmoment1.diff(dmoment2, 'minutes') + " min.";
+            return $str + " hace " + dmoment1.diff(dmoment2, 'minutes') + " min.";
         } else {
-            return "Últ. " + $str + " hace " + diff + " hora(s)";
+            return $str + " hace " + diff + " hora(s)";
         }
     } else {
-        return "Últ. " + $str + " hace " + diff + " dia(s)";
+        return $str + " hace " + diff + " dia(s)";
     }
+}
+
+function titleDate($this, $date) {
+    $date = new Date($date);
+    $date = moment($date).format();
+    //console.log($date);
+    var diffDate = getDiffDates(new Date().toISOString().substr(0, 19), $date.substr(0, 19), '');
+    $($this).attr('title', diffDate);
 }
 
 function getStatsHomeModelbyCard($idDiv, $url, $footer_text) {
@@ -173,7 +181,8 @@ function getStatsHomeModelbyCard($idDiv, $url, $footer_text) {
             data = jQuery.parseJSON(data);
             $('#' + $idDiv + ' .numbers-sub span').html(data['count']);
             if (data['last'] != null) {
-                $('#' + $idDiv + ' .footer span').html(getDiffDates(new Date().toISOString().substr(0, 19), data['last']['created'].substr(0, 19), $footer_text));    
+                //console.log(new Date(data['last']['created']).toISOString());
+                $('#' + $idDiv + ' .footer span').html(getDiffDates(new Date().toISOString().substr(0, 19), data['last']['created'].substr(0, 19), 'Últ. ' + $footer_text));    
             } else{
                 $('#' + $idDiv + ' .footer span').html('Aún no hay ' + $footer_text);
             }
@@ -305,6 +314,49 @@ function defaultGeolocationStore($divs, $point, $zoom, $zoomLocation, $existLoca
     });
 }
 
+function defaultLocationOrder($idDiv, $order, $zoom) {
+    var myLatlng = new google.maps.LatLng($order['latitude'], $order['longitude']);
+    var mapOptions = {
+      zoom: $zoom,
+      center: myLatlng,
+      scrollwheel: false, //we disable de scroll over the map, it is a really annoing when you scroll through page
+      styles: [{"featureType":"water","stylers":[{"saturation":43},{"lightness":-11},{"hue":"#0088ff"}]},{"featureType":"road","elementType":"geometry.fill","stylers":[{"hue":"#ff0000"},{"saturation":-100},{"lightness":99}]},{"featureType":"road","elementType":"geometry.stroke","stylers":[{"color":"#808080"},{"lightness":54}]},{"featureType":"landscape.man_made","elementType":"geometry.fill","stylers":[{"color":"#ece2d9"}]},{"featureType":"poi.park","elementType":"geometry.fill","stylers":[{"color":"#ccdca1"}]},{"featureType":"road","elementType":"labels.text.fill","stylers":[{"color":"#767676"}]},{"featureType":"road","elementType":"labels.text.stroke","stylers":[{"color":"#ffffff"}]},{"featureType":"poi","stylers":[{"visibility":"off"}]},{"featureType":"landscape.natural","elementType":"geometry.fill","stylers":[{"visibility":"on"},{"color":"#b8cb93"}]},{"featureType":"poi.park","stylers":[{"visibility":"on"}]},{"featureType":"poi.sports_complex","stylers":[{"visibility":"on"}]},{"featureType":"poi.medical","stylers":[{"visibility":"on"}]},{"featureType":"poi.business","stylers":[{"visibility":"simplified"}]}]
+
+    }
+
+    var map = new google.maps.Map(document.getElementById($idDiv), mapOptions);
+
+    var marker = new google.maps.Marker({
+        position: myLatlng,
+        title: $order['code']
+    });
+
+    var infoWindow = new google.maps.InfoWindow(), marker;
+
+    $date = new Date($order['created']);
+    $date = moment($date).format();
+
+    var infoWindowContent = [
+        '<div class="info-content-map">' +
+          '<h3>' + $order['code'] + '</h3>' +
+          '<p><span class="text-success"><small>Referencia:</small></span> ' + $order['address'] + '</p>' + 
+          '<p><span class="text-success"><small>Teléfono:</small></span> ' + ($order['client']['phone'] != '' ? $order['client']['phone'] : '' ) + '</p>' + 
+          '<p><span class="text-success"><small>E-mail:</small></span> ' + $order['client']['email'] + '</p>' + 
+          '<p><span class="text-success"><small>Hora:</small></span> ' + $order['created_hour'] + ' (' + getDiffDates(new Date().toISOString().substr(0, 19), $date.substr(0, 19), '') + ')</p>' + 
+        '</div>'
+      ];
+
+    google.maps.event.addListener(marker, 'click', (function(marker) {
+        return function() {
+            infoWindow.setContent(infoWindowContent[0]);
+            infoWindow.open(map, marker);
+        }
+    })(marker));
+
+    // To add the marker to the map, call setMap();
+    marker.setMap(map);
+}
+
 $('#map-address').on('keyup keypress', function(e) {
     var keyCode = e.keyCode || e.which;
     if (keyCode === 13) {
@@ -375,10 +427,12 @@ $(document).ready(function(){
     if ($('.mercapp-dashboard-admin').length > 0) {
         getStatsHomeModelbyCard('stores-stats-admin', $('#stores-stats-admin').data("url"), 'reg.');
         getStatsHomeModelbyCard('products-stats-admin', $('#products-stats-admin').data("url"), 'reg.');
+        getStatsHomeModelbyCard('orders-stats-admin', $('#orders-stats-admin').data("url"), 'orden');
     }
 
     if ($('.mercapp-dashboard-store').length > 0) {
         getStatsHomeModelbyCard('products-stats-store', $('#products-stats-store').data("url"), 'reg.');
+        getStatsHomeModelbyCard('orders-stats-store', $('#orders-stats-store').data("url"), 'orden');
     }
 
     if ($('.mercapp-others').length > 0) {
@@ -444,6 +498,19 @@ $(document).ready(function(){
         }
         var $ids = {idDiv: 'map-location', idSearch: 'map-search', idInput: 'map-address', idLat: 'latitude', idLng: 'longitude'};
         defaultGeolocationStore($ids, $point, 6, 15, $existLocation);
+    }
+
+    if ($('#map-order').length > 0) {
+        $().ready(function(){
+            var $order = $('#map-order').data("order");
+            /*$store['address'] = ($store['address'] == '' ? 'ninguna' : $store['address']);
+            $store['phone'] = ($store['phone'] == '' ? '--' : $store['phone']);
+            $store['working_hours'] = ($store['start_time'] == '' ? 'las 24 horas' : $store['start_time'] + ' a ' + $store['close_time'] );
+            $store['rating'] = ($store['rating'] == null ? 'sin evaluar' : $store['rating']);
+            $store['description'] = ($store['description'] == '' ? 'sin descripción' : $store['description']);
+            $store['url_image'] = $('#map').data("url-image");*/
+            defaultLocationOrder('map-order', $order, 15);
+        });
     }
 
 });

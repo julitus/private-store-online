@@ -39,7 +39,7 @@
                     </div>
                     <div class="col-xs-12">
                         <span class="text-success"><small>Creado por</small></span><br>
-                        <?= $product->store->name . ($product->store->role ? '' : '<i class="fa fa-star-o admin-star"></i>') ?>
+                        <?= $product->has('store') ? h($product->store->name) . ($product->store->role ? '' : '<i class="fa fa-star-o admin-star"></i>') : '--' ?>
                     </div>
                     <div class="col-xs-12">
                         <span class="text-success"><small>Creado</small></span><br>

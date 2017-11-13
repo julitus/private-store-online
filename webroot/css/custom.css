@@ -223,6 +223,9 @@ i.admin-star {
 }
 .content-logo .image-logo img {
     height: 100px;
+    position: absolute;
+	left: 50%;
+	-webkit-transform: translateY(0%) translateX(-50%);
 }
 .content-image .image-image {
 	height: 140px;
@@ -243,6 +246,27 @@ img.img-flag {
 .select2-container--default .select2-search--inline .select2-search__field {
 	height: 100%;
 }
+.title-hover {
+	cursor: default;
+}
+.label-code {
+    background-color: #ff5454;
+    font-size: 70%;
+    vertical-align: middle;
+}
+.card label.order-status-title {
+	float: right;
+}
+.table-custom {
+	font-size: 12px;
+}
+.table-custom > tbody > tr > td {
+	padding: 8px;
+}
+.table-custom-total {
+	padding-right: 40px;
+	float: right;
+}
 @media (max-width: 991px) {
 	.navbar-header a img {
 		height: 47px;
@@ -254,5 +278,8 @@ img.img-flag {
 	.sidebar .logo img, .off-canvas-sidebar .logo img {
 		max-width: 190px;
 		margin-top: 0px;
+	}
+	.table-custom-total {
+		padding-right: 20px;
 	}
 }
